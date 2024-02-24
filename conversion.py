@@ -2,14 +2,18 @@ import json
 import numpy as np
 import json
 
+
 def filter_log_file(file_path, cameraname):
+    """
+        This function reads the log file and filters the data for the given camera name.
+        It returns the filtered data and the camera object.
+        The camera object contains the position and the projection matrix of the camera.
+
+    """
     data = []
     camera = None
     with open(file_path, 'r') as file:
-    #    for line in file:
-    #        text, json_str = line.rsplit(' ', 1)
-    #        if filter_value in text:
-    #            result.append(json.loads(json_str))
+
         lines = file.readlines()
         for i in range(0, len(lines), 1):
             if lines[i].strip() == '' or lines[i].startswith('---'):
@@ -21,7 +25,6 @@ def filter_log_file(file_path, cameraname):
             pos2 = lines[i].rfind('}')
 
             json_data = json.loads(lines[i][pos1:pos2+1])
-            #json_data['depth'] as integer
 
             if json_data['state'] == "1" and int(json_data['depth']) <= 3:
                 
@@ -45,8 +48,12 @@ def filter_log_file(file_path, cameraname):
     return data, camera
 
 
-
 def transform_vector(matrix, json_str):
+    """
+    This function transforms the given vector with the given matrix.
+    The vector is given as a JSON string and the matrix is given as a 4x4 list of lists.
+    The function returns the transformed vector as a JSON string.
+    """
     # Parse the JSON string to get the vector values
     data = json.loads(json_str)
     vector = np.array([data['x'], data['y'], data['z'], 1])
@@ -60,6 +67,11 @@ def transform_vector(matrix, json_str):
 
 
 def getObjectsFromInput(inputs):
+    """
+    This function returns a list of Vector3 objects from the given input data.
+    The input data is a list of dictionaries, where each dictionary contains the data of an object.
+    The Vector3 objects contain the position of the objects in world coordinates.
+    """
     objects = []
     for i in range(0, len(inputs), 1):
         #if inputs[i]['json_data']['m_Name'] != "Main Camera":
@@ -67,26 +79,34 @@ def getObjectsFromInput(inputs):
     return objects
 
 class Camera:
+    """
+    This class represents a camera in 3D space.
+    """
     def __init__(self, position, projection_matrix):
+        """
+        The constructor takes the position and the projection matrix of the camera.
+        """
         self.position = position
         self.projection_matrix = projection_matrix
 class Plane:
+    """
+    This class represents a plane in 3D space.
+    """
     def __init__(self, normal):
+        """
+        The constructor takes the normal vector of the plane.
+        """
         self.normal = normal
 
     def project_on_plane(self, vector):
+        """
+        This method projects the given vector onto the plane.
+        It returns the projected vector.
+        """
         # Implement the projection of the vector onto the plane defined by the plane's normal
         distance = np.dot(vector, self.normal) / np.linalg.norm(self.normal)
         projection = vector - distance * self.normal
         return projection
-
-# 	return super.getWorldDirection( target ).negate();
-#		this.updateWorldMatrix( true, false );
-#
-#		const e = this.matrixWorld.elements;
-#
-#		return target.set( e[ 8 ], e[ 9 ], e[ 10 ] ).normalize();
-
 
 def get_camera_direction(camera, target_position):
     """Calculate the world direction vector from the camera to its target.
@@ -106,7 +126,14 @@ def get_camera_direction(camera, target_position):
     return np.linalg.norm(target_position) #TODO Negate???
 
 class Vector3:
+    """
+    This class represents a 3D vector.
+
+    """
     def __init__(self, x, y, z, name=None):
+        """
+        The constructor takes the x, y and z coordinates of the vector.
+        """
         self.x = x
         self.y = y
         self.z = z
@@ -123,29 +150,22 @@ class Vector3:
         return self.name
     
         
-
-    # Eine einfache Projektionsmethode, die hier nicht vollständig definiert ist
     def project(self, camera):
+        """
+        This method projects the vector from world coordinates to camera coordinates.
+        It returns the projected vector.
+        """
         camera_inverse = np.linalg.inv(camera.position)
-        #camera_projection =  np.array([[1.0078700806456729, 0, 0, 0],
-        #                        [0, 1.3032253728412058, 0, 0],
-        #                        [0, 0, -1.0002000200020003, -1],
-        #                        [0, 0, -0.20002000200020004, 0]])
         camera_projection = camera.projection_matrix
-        tmp = self.applyMatrix4x4(camera_inverse)#, [self.x, self.y, self.z])
-        tmp = self.applyMatrix4x4(camera_projection)#, tmp)
-        return tmp #Vector3(tmp[0], tmp[1], tmp[2],self.name) 
+        
+        return self.applyMatrix4x4(camera_inverse).applyMatrix4x4(camera_projection)
 
-    def applyMatrix4x4(self, matrix):#, vector):
+    def applyMatrix4x4(self, matrix):
+        """
+        This method applies the given 4x4 matrix to the vector.
+        It returns the transformed vector.
+        """
         # Create a 4x1 matrix from the vector
-    
-        #TODO: const w = 1 / ( e[ 3 ] * x + e[ 7 ] * y + e[ 11 ] * z + e[ 15 ] );
-        #This calculates the inverse of the w component after the transformation.
-        # In homogeneous coordinates (used in 3D graphics for matrix transformations), 
-        #the w component is used for perspective transformations. This calculation effectively applies 
-        #the perspective division part of the transformation, where the w component is used to scale the x, y, and z components 
-        #back to their proper perspective.
-    
         x = self.x
         y = self.y
         z = self.z
@@ -155,14 +175,12 @@ class Vector3:
         self.y = ( matrix[ 1 ][0] * x + matrix[1][1] * y + matrix[1][2] * z +  matrix[1][3] ) * w
         self.z = ( matrix[ 2 ][0] * x + matrix[2][1] * y + matrix[2][2] * z +  matrix[2][3] ) * w
 
-        #vector = np.array([vector[0], vector[1], vector[2], 1])
-        # Perform the matrix multiplication
-        #transformed_vector = np.dot(matrix, vector)
-    
-        # Return the transformed vector
         return self         
     
 def compare_positions(objA, objB):
+    """
+    This function compares the positions of two objects in camera space and prints the result.
+    """
     left_right = "links" if objA.x < objB.x else "rechts"
     left_right = left_right if abs(objA.x - objB.x) > 0.01 else "selbe ebene"
     above_below = "unter" if objA.y < objB.y else "über"
@@ -173,6 +191,9 @@ def compare_positions(objA, objB):
     print(f"\n Objekt {objA.name} ist {left_right} von Objekt {objB.name} und {above_below} Objekt {objB.name} und {front_back} Objekt {objB.name}.")
 
 def determine_arrangement2(camera, objects):
+    """
+    This function determines the arrangement of the objects in camera space and prints the result.
+    """
     for i in range(len(objects)):
         objInCameraSpace = objects[i].project(camera)
         for j in range(len(objects)):
@@ -180,23 +201,8 @@ def determine_arrangement2(camera, objects):
                 compare_positions(objInCameraSpace, objects[j].project(camera))
 
 
-    
-
-
-# creae a 4x4 matrix
-#camera = np.array([[1, 0, 0, 0],
-#                   [0, 1, -6.123233995736766e-17, 0],
-#                   [0, 6.123233995736766e-17, 1, 0],
-#                   [0, 6.123233995736766e-15, 100,1]])
-
-
 inputs, camera = filter_log_file("input_data/scenegraphlog3.log", "Main Camera")
 
-
-#print(inputs)
-
 objects = getObjectsFromInput(inputs)
-
-#print(objects)
 
 determine_arrangement2(camera, objects)
