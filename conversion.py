@@ -2,15 +2,44 @@ import json
 import numpy as np
 import json
 
-def filter_log_file(file_path, filter_value):
-    result = []
+def filter_log_file(file_path, cameraname):
+    data = []
+    camera = None
     with open(file_path, 'r') as file:
-        for line in file:
-            text, json_str = line.rsplit(' ', 1)
-            if filter_value in text:
-                result.append(json.loads(json_str))
-    return result
+    #    for line in file:
+    #        text, json_str = line.rsplit(' ', 1)
+    #        if filter_value in text:
+    #            result.append(json.loads(json_str))
+        lines = file.readlines()
+        for i in range(0, len(lines), 1):
+            if lines[i].strip() == '' or lines[i].startswith('---'):
+                continue
 
+            visibility_state, tree_position = lines[i].split(' ', 1)
+            # take line and get content of the braces in the line with a regex and convert to json
+            pos1 = lines[i].find('{')
+            pos2 = lines[i].rfind('}')
+
+            json_data = json.loads(lines[i][pos1:pos2+1])
+            #json_data['depth'] as integer
+
+            if json_data['state'] == "1" and int(json_data['depth']) <= 3:
+                
+                data.append({
+                    'visibility_state': int(visibility_state),
+                    'tree_position': tree_position.strip(),
+                    'json_data': json_data
+                })
+            
+            if json_data['name'].find(cameraname) > -1:
+                camera = np.array([[json_data['c_00'], json_data['c_01'], json_data['c_02'], json_data['c_03']],
+                                   [json_data['c_10'], json_data['c_11'], json_data['c_12'], json_data['c_13']],
+                                   [json_data['c_20'], json_data['c_21'], json_data['c_22'], json_data['c_23']],
+                                   [json_data['c_30'], json_data['c_31'], json_data['c_32'], json_data['c_33']]])
+
+            
+            
+    return data, camera
 
 
 
@@ -43,6 +72,12 @@ def applyMatrix4x4(matrix, vector):
     # Return the transformed vector
     return transformed_vector
 
+def getObjectsFromInput(inputs):
+    objects = []
+    for i in range(0, len(inputs), 1):
+        #if inputs[i]['json_data']['m_Name'] != "Main Camera":
+        objects.append(Vector3(float(inputs[i]['json_data']['t_x']), float(inputs[i]['json_data']['t_y']), float(inputs[i]['json_data']['t_z']), inputs[i]['json_data']['path']))
+    return objects
 
 class Plane:
     def __init__(self, normal):
@@ -139,7 +174,7 @@ def compare_positions(objA, objB):
     front_back = "vor" if objA.z < objB.z else "hinter"
     front_back = front_back if objA.z != objB.z else "selbe Tiefe"
 
-    print(f"Objekt {objA.name} ist {left_right} von Objekt {objB.name} und {above_below} Objekt {objB.name} und {front_back} Objekt {objB.name}.")
+    print(f"\n Objekt {objA.name} ist {left_right} von Objekt {objB.name} und {above_below} Objekt {objB.name} und {front_back} Objekt {objB.name}.")
 
 def determine_arrangement2(camera, objects):
     #obj1PositionInCameraSpace = objects[0].project(camera)
@@ -240,6 +275,13 @@ camera = np.array([[1, 0, 0, 0],
 
 #objects = [object1, object2, object3, object4]
 
-objects = filter_log_file("log.txt", "camera")
+inputs, camera = filter_log_file("input_data/scenegraphlog3.log", "Main Camera")
+
+
+#print(inputs)
+
+objects = getObjectsFromInput(inputs)
+
+#print(objects)
 
 determine_arrangement2(camera, objects)
