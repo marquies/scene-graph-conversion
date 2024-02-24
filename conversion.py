@@ -32,12 +32,15 @@ def filter_log_file(file_path, cameraname):
                 })
             
             if json_data['name'].find(cameraname) > -1:
-                camera = np.array([[json_data['c_00'], json_data['c_01'], json_data['c_02'], json_data['c_03']],
+                x = np.array([[json_data['c_00'], json_data['c_01'], json_data['c_02'], json_data['c_03']],
                                    [json_data['c_10'], json_data['c_11'], json_data['c_12'], json_data['c_13']],
                                    [json_data['c_20'], json_data['c_21'], json_data['c_22'], json_data['c_23']],
                                    [json_data['c_30'], json_data['c_31'], json_data['c_32'], json_data['c_33']]])
-
-            
+                y      = np.array([[json_data['pm_00'], json_data['pm_01'], json_data['pm_02'], json_data['pm_03']],
+                                   [json_data['pm_10'], json_data['pm_11'], json_data['pm_12'], json_data['pm_13']],
+                                   [json_data['pm_20'], json_data['pm_21'], json_data['pm_22'], json_data['pm_23']],
+                                   [json_data['pm_30'], json_data['pm_31'], json_data['pm_32'], json_data['pm_33']]])
+                camera = Camera(x, y)
             
     return data, camera
 
@@ -55,22 +58,6 @@ def transform_vector(matrix, json_str):
     return transformed_vector
 
 
-def applyMatrix4x4(matrix, vector):
-    # Create a 4x1 matrix from the vector
-    vector = np.array([vector[0], vector[1], vector[2], 1])
-
-    #TODO: const w = 1 / ( e[ 3 ] * x + e[ 7 ] * y + e[ 11 ] * z + e[ 15 ] );
-    #This calculates the inverse of the w component after the transformation.
-    # In homogeneous coordinates (used in 3D graphics for matrix transformations), 
-    #the w component is used for perspective transformations. This calculation effectively applies 
-    #the perspective division part of the transformation, where the w component is used to scale the x, y, and z components 
-    #back to their proper perspective.
-
-    # Perform the matrix multiplication
-    transformed_vector = np.dot(matrix, vector)
-
-    # Return the transformed vector
-    return transformed_vector
 
 def getObjectsFromInput(inputs):
     objects = []
@@ -79,6 +66,10 @@ def getObjectsFromInput(inputs):
         objects.append(Vector3(float(inputs[i]['json_data']['t_x']), float(inputs[i]['json_data']['t_y']), float(inputs[i]['json_data']['t_z']), inputs[i]['json_data']['path']))
     return objects
 
+class Camera:
+    def __init__(self, position, projection_matrix):
+        self.position = position
+        self.projection_matrix = projection_matrix
 class Plane:
     def __init__(self, normal):
         self.normal = normal
@@ -131,62 +122,57 @@ class Vector3:
     def name(self):
         return self.name
     
-    #[
-   # 1.0078700806456729,
-   # 0,
-   # 0,
-   # 0,
-        
-   # 0,
-   # 1.3032253728412058,
-   # 0,
-   # 0,
-        
-   # 0,
-   # 0,
-   # -1.0002000200020003,
-   # -1,
-        
-   # 0,
-   # 0,
-   # -0.20002000200020004,
-   # 0
-    #]
         
 
     # Eine einfache Projektionsmethode, die hier nicht vollständig definiert ist
     def project(self, camera):
-        camera_inverse = np.linalg.inv(camera)
-        camera_projection =  np.array([[1.0078700806456729, 0, 0, 0],
-                                [0, 1.3032253728412058, 0, 0],
-                                [0, 0, -1.0002000200020003, -1],
-                                [0, 0, -0.20002000200020004, 0]])
-        tmp = applyMatrix4x4(camera_inverse, [self.x, self.y, self.z])
-        tmp = applyMatrix4x4(camera_projection, [tmp[0], tmp[1], tmp[2]])
-        return Vector3(tmp[0], tmp[1], tmp[2],self.name) 
-        
+        camera_inverse = np.linalg.inv(camera.position)
+        #camera_projection =  np.array([[1.0078700806456729, 0, 0, 0],
+        #                        [0, 1.3032253728412058, 0, 0],
+        #                        [0, 0, -1.0002000200020003, -1],
+        #                        [0, 0, -0.20002000200020004, 0]])
+        camera_projection = camera.projection_matrix
+        tmp = self.applyMatrix4x4(camera_inverse)#, [self.x, self.y, self.z])
+        tmp = self.applyMatrix4x4(camera_projection)#, tmp)
+        return tmp #Vector3(tmp[0], tmp[1], tmp[2],self.name) 
 
+    def applyMatrix4x4(self, matrix):#, vector):
+        # Create a 4x1 matrix from the vector
+    
+        #TODO: const w = 1 / ( e[ 3 ] * x + e[ 7 ] * y + e[ 11 ] * z + e[ 15 ] );
+        #This calculates the inverse of the w component after the transformation.
+        # In homogeneous coordinates (used in 3D graphics for matrix transformations), 
+        #the w component is used for perspective transformations. This calculation effectively applies 
+        #the perspective division part of the transformation, where the w component is used to scale the x, y, and z components 
+        #back to their proper perspective.
+    
+        x = self.x
+        y = self.y
+        z = self.z
+        w = 1 / ( matrix[3][0] * x + matrix[3][1] * y + matrix[3][2] * z + matrix[3][3] )
+        
+        self.x = ( matrix[ 0 ][0] * x + matrix[0][1] * y + matrix[0][2] * z +  matrix[0][3] ) * w
+        self.y = ( matrix[ 1 ][0] * x + matrix[1][1] * y + matrix[1][2] * z +  matrix[1][3] ) * w
+        self.z = ( matrix[ 2 ][0] * x + matrix[2][1] * y + matrix[2][2] * z +  matrix[2][3] ) * w
+
+        #vector = np.array([vector[0], vector[1], vector[2], 1])
+        # Perform the matrix multiplication
+        #transformed_vector = np.dot(matrix, vector)
+    
+        # Return the transformed vector
+        return self         
+    
 def compare_positions(objA, objB):
     left_right = "links" if objA.x < objB.x else "rechts"
     left_right = left_right if abs(objA.x - objB.x) > 0.01 else "selbe ebene"
     above_below = "unter" if objA.y < objB.y else "über"
     above_below = above_below if abs(objA.y - objB.y) > 0.01 else "selbe höhe"
     front_back = "vor" if objA.z < objB.z else "hinter"
-    front_back = front_back if objA.z != objB.z else "selbe Tiefe"
+    front_back = front_back if abs(objA.z - objB.z) > 0.01 else "selbe Tiefe"
 
     print(f"\n Objekt {objA.name} ist {left_right} von Objekt {objB.name} und {above_below} Objekt {objB.name} und {front_back} Objekt {objB.name}.")
 
 def determine_arrangement2(camera, objects):
-    #obj1PositionInCameraSpace = objects[0].project(camera)
-    #obj2PositionInCameraSpace = objects[1].project(camera)
-    #obj3PositionInCameraSpace = objects[2].project(camera)
-
-    #compare_positions(obj1PositionInCameraSpace, obj2PositionInCameraSpace)
-    #compare_positions(obj2PositionInCameraSpace, obj3PositionInCameraSpace)
-    #compare_positions(obj1PositionInCameraSpace, obj3PositionInCameraSpace)
-    #compare_positions(obj2PositionInCameraSpace, obj1PositionInCameraSpace)
-    #compare_positions(obj3PositionInCameraSpace, obj2PositionInCameraSpace)
-    #compare_positions(obj3PositionInCameraSpace, obj1PositionInCameraSpace)
     for i in range(len(objects)):
         objInCameraSpace = objects[i].project(camera)
         for j in range(len(objects)):
@@ -194,86 +180,15 @@ def determine_arrangement2(camera, objects):
                 compare_positions(objInCameraSpace, objects[j].project(camera))
 
 
-#def determine_arrangement(camera, objects):
-#    # Assuming 'camera' has a method 'get_world_direction()' that returns a NumPy array
-#    direction = get_camera_direction(camera, np.array([0, 0, 0]))
-#
-#    # Create a plane perpendicular to the camera direction
-#    plane = Plane(direction)
-#
-#    points = []
-#    for object in objects:
-#        object_position = object  # Assuming 'object.position' is a list or tuple
-#        projected_point = plane.project_on_plane(object_position)
-#        points.append(projected_point)
-#
-#    threshold = 0.1
-#    x1_are_side_by_side = abs(points[0][0] - points[1][0]) > threshold
-#    x2_are_side_by_side = abs(points[0][0] - points[2][0]) > threshold
-#    x3_are_side_by_side = abs(points[1][0] - points[2][0]) > threshold
-#
-#    x1_are_up_down = abs(points[0][2] - points[1][2]) > threshold
-#    x2_are_up_down = abs(points[0][2] - points[2][2]) > threshold
-#    x3_are_up_down = abs(points[1][2] - points[2][2]) > threshold
-#
-#    print("x1 Die Objekte g,r sind up down." if x1_are_up_down else "x1 Die Objekte g,r sind same.",
-#          "x2 Die Objekte g,b sind up down." if x2_are_up_down else "x2 Die Objekte g,b sind same.",
-#          "x3 Die Objekte r,b sind up down." if x3_are_up_down else "x3 Die Objekte r,b sind same.")
-#
-
-# Position der Kamera
-# camera.position.set(0, 0, 100);
-
-#  object1.position.set(-10, 0, 0);
-#  object2.position.set(0, 0, 0);
-#  object3.position.set(0, 0, 10);
-
-# create a vector -10,0,0
-# create a vector 0,0,0
-# create a vector 0,0,10
     
 
 
-#object1 = np.array([-10, 0, 0])
-#object2 = np.array([0, 0, 0])
-#object3 = np.array([0, 0, 10])
-
-object1 = Vector3(-10, 0, 0, "Couch_1")
-object2 = Vector3(0, 0, 0, "Kühlschrank_1")
-object3 = Vector3(0, 0, 10, "Mensch_1")
-object4 = Vector3(10, 0, 0, "Lampe_1")
-
-#[
-#    1,
-#    0,
-#    0,
-#    0,
-
-#    0,
-#    1,
-#    -6.123233995736766e-17,
-#    0,
-
-#    0,
-#    6.123233995736766e-17,
-#    1,
-#    0,
-
-#    0,
-#    6.123233995736766e-15,
-#    100,
-#    1
-#]
-
 # creae a 4x4 matrix
-camera = np.array([[1, 0, 0, 0],
-                   [0, 1, -6.123233995736766e-17, 0],
-                   [0, 6.123233995736766e-17, 1, 0],
-                   [0, 6.123233995736766e-15, 100,1]])
+#camera = np.array([[1, 0, 0, 0],
+#                   [0, 1, -6.123233995736766e-17, 0],
+#                   [0, 6.123233995736766e-17, 1, 0],
+#                   [0, 6.123233995736766e-15, 100,1]])
 
-
-
-#objects = [object1, object2, object3, object4]
 
 inputs, camera = filter_log_file("input_data/scenegraphlog3.log", "Main Camera")
 
