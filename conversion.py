@@ -1,6 +1,7 @@
 import json
 import numpy as np
 import json
+import pyyed
 
 
 def filter_log_file(file_path, cameraname):
@@ -46,6 +47,19 @@ def filter_log_file(file_path, cameraname):
                 camera = Camera(x, y)
             
     return data, camera
+
+class Tuple:
+    """
+    This class represents a 3D tuple.
+    """
+    def __init__(self, x, y, z):
+        """
+        The constructor takes the x, y, z and w coordinates of the tuple.
+        """
+        self.x = x
+        self.y = y
+        self.z = z
+
 
 
 def transform_vector(matrix, json_str):
@@ -155,8 +169,10 @@ class Vector3:
         This method projects the vector from world coordinates to camera coordinates.
         It returns the projected vector.
         """
-        camera_inverse = np.linalg.inv(camera.position)
-        camera_projection = camera.projection_matrix
+        
+
+        camera_inverse = np.linalg.inv(camera.position.copy())
+        camera_projection = camera.projection_matrix.copy()
         
         return self.applyMatrix4x4(camera_inverse).applyMatrix4x4(camera_projection)
 
@@ -177,6 +193,12 @@ class Vector3:
 
         return self         
     
+    def clone(self):
+        """
+        This method returns a copy of the vector.
+        """
+        return Vector3(self.x, self.y, self.z, self.name)
+    
 def compare_positions(objA, objB):
     """
     This function compares the positions of two objects in camera space and prints the result.
@@ -189,20 +211,59 @@ def compare_positions(objA, objB):
     front_back = front_back if abs(objA.z - objB.z) > 0.01 else "selbe Tiefe"
 
     print(f"\n Objekt {objA.name} ist {left_right} von Objekt {objB.name} und {above_below} Objekt {objB.name} und {front_back} Objekt {objB.name}.")
+    return [Tuple(objA.name, left_right, objB.name), Tuple(objA.name, above_below, objB.name), Tuple(objA.name, front_back, objB.name)]
 
 def determine_arrangement2(camera, objects):
     """
     This function determines the arrangement of the objects in camera space and prints the result.
     """
+    tuples = []
     for i in range(len(objects)):
-        objInCameraSpace = objects[i].project(camera)
+        objInCameraSpace = objects[i].clone().project(camera)
         for j in range(len(objects)):
             if i != j:
-                compare_positions(objInCameraSpace, objects[j].project(camera))
+                tuple = compare_positions(objInCameraSpace, objects[j].clone().project(camera))
+                # appent tuple array elements to tuples
+                for t in tuple:
+                    tuples.append(t)
+    return tuples
 
 
-inputs, camera = filter_log_file("input_data/scenegraphlog3.log", "Main Camera")
+inputs, camera = filter_log_file("input_data/scenegraphlog4.log", "Main Camera")
+
+print("Found " + str(len(inputs)) + " objects in the log file.  ")
+
 
 objects = getObjectsFromInput(inputs)
 
-determine_arrangement2(camera, objects)
+print("Filtered " + str(len(objects)) + " objects from the log file.   ")
+
+tuples = determine_arrangement2(camera, objects)
+
+g = pyyed.Graph()
+
+for i in range(len(tuples)):
+    if (tuples[i].x not in g.nodes):
+        g.add_node(tuples[i].x)
+    if (tuples[i].z not in g.nodes):
+        g.add_node(tuples[i].z)
+    g.add_edge(tuples[i].x, tuples[i].z).add_label(tuples[i].y)
+
+print("Added " + str(len(g.nodes)) + " nodes and " + str(len(g.edges)) + " edges to the graph.   ")
+#g.add_node('foo', font_family="Zapfino")
+#g.add_node('foo2', shape="roundrectangle", font_style="bolditalic", underlined_text="true")
+
+#g.add_edge('foo1', 'foo2')
+#g.add_node('abc', font_size="72", height="100")
+
+#g.add_node('bar', label="Multi\nline\ntext")
+#g.add_node('foobar', label="""Multi
+#Line
+#Text!""")
+    
+#print(g.get_graph())
+
+# To write to file:
+with open('test_graph.graphml', 'w') as fp:
+    fp.write(g.get_graph())
+
