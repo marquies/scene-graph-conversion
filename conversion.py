@@ -2,7 +2,10 @@ import json
 import numpy as np
 import json
 import pyyed
+from openai import OpenAI
 
+import requests # request img from web
+import shutil # save img locally
 
 def filter_log_file(file_path, cameraname):
     """
@@ -203,14 +206,14 @@ def compare_positions(objA, objB):
     """
     This function compares the positions of two objects in camera space and prints the result.
     """
-    left_right = "links" if objA.x < objB.x else "rechts"
-    left_right = left_right if abs(objA.x - objB.x) > 0.01 else "selbe ebene"
-    above_below = "unter" if objA.y < objB.y else "über"
-    above_below = above_below if abs(objA.y - objB.y) > 0.01 else "selbe höhe"
-    front_back = "vor" if objA.z < objB.z else "hinter"
-    front_back = front_back if abs(objA.z - objB.z) > 0.01 else "selbe Tiefe"
+    left_right = "left" if objA.x < objB.x else "right"
+    left_right = left_right if abs(objA.x - objB.x) > 0.01 else "same level"
+    above_below = "beneath" if objA.y < objB.y else "above"
+    above_below = above_below if abs(objA.y - objB.y) > 0.01 else "same height"
+    front_back = "in front of" if objA.z < objB.z else "behind"
+    front_back = front_back if abs(objA.z - objB.z) > 0.01 else "same depth"
 
-    print(f"\n Objekt {objA.name} ist {left_right} von Objekt {objB.name} und {above_below} Objekt {objB.name} und {front_back} Objekt {objB.name}.")
+    print(f"\n object {objA.name} is {left_right} of object {objB.name} and {above_below} object {objB.name} and {front_back} object {objB.name}.")
     return [Tuple(objA.name, left_right, objB.name), Tuple(objA.name, above_below, objB.name), Tuple(objA.name, front_back, objB.name)]
 
 def determine_arrangement2(camera, objects):
@@ -228,8 +231,20 @@ def determine_arrangement2(camera, objects):
                     tuples.append(t)
     return tuples
 
+def remove_bidirectional_duplicates(tuples):
+    seen = set()
+    result = []
+    for item in tuples:
+        obj = item.x
+        predicate = item.y
+        subject = item.z
+        if (obj, predicate, subject) not in seen:
+            seen.add((subject, predicate, obj))
+            result.append(Tuple(subject, predicate, obj))
+    return result
 
-inputs, camera = filter_log_file("input_data/scenegraphlog5.log", "Main Camera")
+inputs, camera = filter_log_file("input_data/scenegraphlog11.log", "Camera")
+#inputs, camera = filter_log_file("input_data/scenegraphlog4.log", "Main Camera")
 
 print("Found " + str(len(inputs)) + " objects in the log file.  ")
 
@@ -239,6 +254,8 @@ objects = getObjectsFromInput(inputs)
 print("Filtered " + str(len(objects)) + " objects from the log file.   ")
 
 tuples = determine_arrangement2(camera, objects)
+
+tuples = remove_bidirectional_duplicates(tuples)
 
 g = pyyed.Graph()
 
@@ -263,7 +280,42 @@ print("Added " + str(len(g.nodes)) + " nodes and " + str(len(g.edges)) + " edges
     
 #print(g.get_graph())
 
+# print a string for each set of tuples
+
+prompt = ""
+for i in range(len(tuples)):
+    objA = tuples[i].x.split('/')[-1]
+    objB = tuples[i].z.split('/')[-1]
+    print("\n" + objA + " is " + tuples[i].y + " " + objB + ".")
+    prompt += "\n" + objA + " is " + tuples[i].y + " " + objB + "."
+    #print(f"\n object {objA.name} is {left_right} of object {objB.name} and {above_below} object {objB.name} and {front_back} object {objB.name}.")
+
+#just keep first 1000 characters from prompt   
+prompt = prompt[:4000]
+
 # To write to file:
 with open('test_graph.graphml', 'w') as fp:
     fp.write(g.get_graph())
+client = OpenAI()
 
+response = client.images.generate(
+  model="dall-e-3",
+  prompt=prompt, #"a white siamese cat",
+  size="1024x1024",
+  quality="standard",
+  #seed=1234567890,
+  #temperature=0.7,
+  n=1,
+)
+
+file_name = 'image.jpg'
+image_url = response.data[0].url
+print(image_url)
+
+res = requests.get(image_url, stream = True)
+if res.status_code == 200:
+    with open(file_name,'wb') as f:
+        shutil.copyfileobj(res.raw, f)
+    print('Image sucessfully Downloaded: ',file_name)
+else:
+    print('Image Couldn\'t be retrieved')
