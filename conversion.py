@@ -229,7 +229,7 @@ def determine_arrangement2(camera, objects):
     return tuples
 
 
-inputs, camera = filter_log_file("input_data/scenegraphlog4.log", "Main Camera")
+inputs, camera = filter_log_file("input_data/scenegraphlog5.log", "Main Camera")
 
 print("Found " + str(len(inputs)) + " objects in the log file.  ")
 
