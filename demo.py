@@ -1,10 +1,13 @@
+"""
+Demo
+"""
+
+import shutil # save img locally
 import pyyed
+
 from openai import OpenAI
 
 import requests # request img from web
-import shutil # save img locally
-
-#from converter import filter_log_file, getObjectsFromInput, determine_arrangement2, remove_bidirectional_duplicates
 import converter.conversion as converter
 
 #inputs, camera = filter_log_file("input_data/scenegraphlog11.log", "Camera")
@@ -12,7 +15,7 @@ inputs, camera = converter.filter_log_file("input_data/scenegraphlog20.log", "Ma
 
 print("Found " + str(len(inputs)) + " objects in the log file.  ")
 
-objects = converter.getObjectsFromInput(inputs)
+objects = converter.get_objects_from_input(inputs)
 
 print("Filtered " + str(len(objects)) + " objects from the log file.   ")
 
@@ -23,9 +26,9 @@ tuples = converter.remove_bidirectional_duplicates(tuples)
 g = pyyed.Graph()
 
 for i in range(len(tuples)):
-    if (tuples[i].x not in g.nodes):
+    if tuples[i].x not in g.nodes:
         g.add_node(tuples[i].x)
-    if (tuples[i].z not in g.nodes):
+    if tuples[i].z not in g.nodes:
         g.add_node(tuples[i].z)
     g.add_edge(tuples[i].x, tuples[i].z).add_label(tuples[i].y)
 
@@ -57,7 +60,7 @@ for i in range(len(tuples)):
 prompt = prompt[:4000]
 
 # To write to file:
-with open('test_graph.graphml', 'w') as fp:
+with open('test_graph.graphml', 'w', encoding='utf-8') as fp:
     fp.write(g.get_graph())
 client = OpenAI()
 
@@ -75,7 +78,7 @@ file_name = 'image.jpg'
 image_url = response.data[0].url
 print(image_url)
 
-res = requests.get(image_url, stream = True)
+res = requests.get(image_url, stream = True, timeout=120)
 if res.status_code == 200:
     with open(file_name,'wb') as f:
         shutil.copyfileobj(res.raw, f)
