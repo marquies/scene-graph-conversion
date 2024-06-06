@@ -26,5 +26,5 @@ export OPENAI_API_KEY=<openai_api_key>
 Use the script with the example data. Just execute 
 
 ```
-python conversion.py
+python demo.py
 ```
