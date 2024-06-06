@@ -65,37 +65,6 @@ class Tuple:
         self.z = z
 
 
-
-def transform_vector(matrix, json_str):
-    """
-    This function transforms the given vector with the given matrix.
-    The vector is given as a JSON string and the matrix is given as a 4x4 list of lists.
-    The function returns the transformed vector as a JSON string.
-    """
-    # Parse the JSON string to get the vector values
-    data = json.loads(json_str)
-    vector = np.array([data['x'], data['y'], data['z'], 1])
-
-    # Perform the matrix transformation
-    
-
-    # Return the transformed vector
-    return transformed_vector
-
-
-
-def getObjectsFromInput(inputs):
-    """
-    This function returns a list of Vector3 objects from the given input data.
-    The input data is a list of dictionaries, where each dictionary contains the data of an object.
-    The Vector3 objects contain the position of the objects in world coordinates.
-    """
-    objects = []
-    for i in range(0, len(inputs), 1):
-        #if inputs[i]['json_data']['m_Name'] != "Main Camera":
-        objects.append(Vector3(float(inputs[i]['json_data']['t_x']), float(inputs[i]['json_data']['t_y']), float(inputs[i]['json_data']['t_z']), inputs[i]['json_data']['path']))
-    return objects
-
 class Camera:
     """
     This class represents a camera in 3D space.
@@ -125,23 +94,7 @@ class Plane:
         distance = np.dot(vector, self.normal) / np.linalg.norm(self.normal)
         projection = vector - distance * self.normal
         return projection
-
-def get_camera_direction(camera, target_position):
-    """Calculate the world direction vector from the camera to its target.
     
-    Args:
-        camera_position (np.ndarray): The camera's position in world coordinates.
-        target_position (np.ndarray): The target's position in world coordinates.
-    
-    Returns:
-        np.ndarray: The normalized direction vector from the camera to the target.
-    """
-    #direction = target_position - camera_position
-    target_position[0] = camera[2][0]
-    target_position[1] = camera[2][1]
-    target_position[2] = camera[2][2]
-    
-    return np.linalg.norm(target_position) #TODO Negate???
 
 class Vector3:
     """
@@ -203,6 +156,55 @@ class Vector3:
         """
         return Vector3(self.x, self.y, self.z, self.name)
     
+
+def transform_vector(matrix, json_str):
+    """
+    This function transforms the given vector with the given matrix.
+    The vector is given as a JSON string and the matrix is given as a 4x4 list of lists.
+    The function returns the transformed vector as a JSON string.
+    """
+    # Parse the JSON string to get the vector values
+    data = json.loads(json_str)
+    vector = np.array([data['x'], data['y'], data['z'], 1])
+
+    # Perform the matrix transformation
+    
+
+    # Return the transformed vector
+    return transformed_vector
+
+
+
+def getObjectsFromInput(inputs):
+    """
+    This function returns a list of Vector3 objects from the given input data.
+    The input data is a list of dictionaries, where each dictionary contains the data of an object.
+    The Vector3 objects contain the position of the objects in world coordinates.
+    """
+    objects = []
+    for i in range(0, len(inputs), 1):
+        #if inputs[i]['json_data']['m_Name'] != "Main Camera":
+        objects.append(Vector3(float(inputs[i]['json_data']['t_x']), float(inputs[i]['json_data']['t_y']), float(inputs[i]['json_data']['t_z']), inputs[i]['json_data']['path']))
+    return objects
+
+
+def get_camera_direction(camera, target_position):
+    """Calculate the world direction vector from the camera to its target.
+    
+    Args:
+        camera_position (np.ndarray): The camera's position in world coordinates.
+        target_position (np.ndarray): The target's position in world coordinates.
+    
+    Returns:
+        np.ndarray: The normalized direction vector from the camera to the target.
+    """
+    #direction = target_position - camera_position
+    target_position[0] = camera[2][0]
+    target_position[1] = camera[2][1]
+    target_position[2] = camera[2][2]
+    
+    return np.linalg.norm(target_position) #TODO Negate???
+
 def compare_positions(objA, objB):
     """
     This function compares the positions of two objects in camera space and prints the result.
@@ -227,7 +229,7 @@ def determine_arrangement2(camera, objects):
         for j in range(len(objects)):
             if i != j:
                 tuple = compare_positions(objInCameraSpace, objects[j].clone().project(camera))
-                # appent tuple array elements to tuples
+                # append tuple array elements to tuples
                 for t in tuple:
                     tuples.append(t)
     return tuples
@@ -248,7 +250,6 @@ def remove_bidirectional_duplicates(tuples):
 inputs, camera = filter_log_file("input_data/scenegraphlog20.log", "Main Camera")
 
 print("Found " + str(len(inputs)) + " objects in the log file.  ")
-
 
 objects = getObjectsFromInput(inputs)
 
