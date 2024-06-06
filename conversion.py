@@ -30,7 +30,8 @@ def filter_log_file(file_path, cameraname):
 
             json_data = json.loads(lines[i][pos1:pos2+1])
 
-            if json_data['state'] == "1" and int(json_data['depth']) <= 3:
+            #if json_data['state'] == "1" and int(json_data['depth']) <= 0:
+            if int(json_data['depth']) <= 0:
                 
                 data.append({
                     'visibility_state': int(visibility_state),
@@ -243,8 +244,8 @@ def remove_bidirectional_duplicates(tuples):
             result.append(Tuple(subject, predicate, obj))
     return result
 
-inputs, camera = filter_log_file("input_data/scenegraphlog11.log", "Camera")
-#inputs, camera = filter_log_file("input_data/scenegraphlog4.log", "Main Camera")
+#inputs, camera = filter_log_file("input_data/scenegraphlog11.log", "Camera")
+inputs, camera = filter_log_file("input_data/scenegraphlog20.log", "Main Camera")
 
 print("Found " + str(len(inputs)) + " objects in the log file.  ")
 
