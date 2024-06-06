@@ -1,3 +1,4 @@
+[![Pylint](https://github.com/marquies/scene-graph-conversion/actions/workflows/pylint.yml/badge.svg?branch=main)](https://github.com/marquies/scene-graph-conversion/actions/workflows/pylint.yml)
 # Scene Graph Conversion
 
 The scripts in the repository are used to convert Rendering Scene Graphs, recorded with a Metaverse Recording Tool in Unity, into Visual Scene Graphs.
