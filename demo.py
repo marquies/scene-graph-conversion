@@ -25,12 +25,12 @@ tuples = converter.remove_bidirectional_duplicates(tuples)
 
 g = pyyed.Graph()
 
-for i in range(len(tuples)):
-    if tuples[i].x not in g.nodes:
-        g.add_node(tuples[i].x)
-    if tuples[i].z not in g.nodes:
-        g.add_node(tuples[i].z)
-    g.add_edge(tuples[i].x, tuples[i].z).add_label(tuples[i].y)
+for element in tuples:
+    if element.x not in g.nodes:
+        g.add_node(element.x)
+    if element.z not in g.nodes:
+        g.add_node(element.z)
+    g.add_edge(element.x, element.z).add_label(element.y)
 
 print("Added " + str(len(g.nodes)) + " nodes and " + str(len(g.edges)) + " edges to the graph.   ")
 #g.add_node('foo', font_family="Zapfino")
@@ -48,12 +48,12 @@ print("Added " + str(len(g.nodes)) + " nodes and " + str(len(g.edges)) + " edges
 
 # print a string for each set of tuples
 
-prompt = ""
-for i in range(len(tuples)):
-    objA = tuples[i].x.split('/')[-1]
-    objB = tuples[i].z.split('/')[-1]
-    print("\n" + objA + " is " + tuples[i].y + " " + objB + ".")
-    prompt += "\n" + objA + " is " + tuples[i].y + " " + objB + "."
+prompt = "" # pylint: disable=invalid-name
+for element in tuples:
+    objA = element.x.split('/')[-1]
+    objB = element.z.split('/')[-1]
+    print("\n" + objA + " is " + element.y + " " + objB + ".")
+    prompt += "\n" + objA + " is " + element.y + " " + objB + "."
     #print(f"\n object {objA.name} is {left_right} of object
     # {objB.name} and {above_below} object {objB.name}
     #  and {front_back} object {objB.name}.")
@@ -76,14 +76,14 @@ response = client.images.generate(
   n=1,
 )
 
-filename = 'image.jpg'
+FILENAME = 'image.jpg'
 image_url = response.data[0].url
 print(image_url)
 
 res = requests.get(image_url, stream = True, timeout=120)
 if res.status_code == 200:
-    with open(filename,'wb') as f:
+    with open(FILENAME,'wb') as f:
         shutil.copyfileobj(res.raw, f)
-    print('Image sucessfully Downloaded: ',filename)
+    print('Image sucessfully Downloaded: ',FILENAME)
 else:
     print('Image Couldn\'t be retrieved')
