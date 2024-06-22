@@ -6,7 +6,7 @@ import unittest
 import numpy as np
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../src')))
-from conversion import Plane # pylint: disable=wrong-import-position
+from sgconversion import Plane # pylint: disable=wrong-import-position
 
 class TestPlane(unittest.TestCase):
     """Test Case for Plane class"""

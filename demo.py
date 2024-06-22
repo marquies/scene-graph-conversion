@@ -12,7 +12,7 @@ from openai import OpenAI
 
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../src')))
-import conversion as converter # pylint: disable=wrong-import-position
+import sgconversion as converter # pylint: disable=wrong-import-position
 
 
 

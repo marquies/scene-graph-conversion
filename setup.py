@@ -27,10 +27,10 @@ def read(*names, **kwargs):
 
 
 setup(
-    name='sgconverter',
+    name='sgconversion',
     version='1.0.0',
     license='MIT',
-    description='A Scene Graph Converter package.',
+    description='A Scene Graph Conversion package.',
     long_description='%s\n%s' % (
         re.compile('^.. start-badges.*^.. end-badges', re.M | re.S).sub('', read('README.md')),
         re.sub(':[a-z]+:`~?(.*?)`', r'``\1``', read('CHANGELOG.md'))

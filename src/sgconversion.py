@@ -37,7 +37,7 @@ def filter_log_file(file_path, cameraname):
                     'tree_position': tree_position.strip(),
                     'json_data': json_data
                 })
-
+            
             if json_data['name'].find(cameraname) > -1:
                 x = np.array([[json_data['c_00'], json_data['c_01'],
                                 json_data['c_02'], json_data['c_03']],
