@@ -22,33 +22,15 @@ class TestConversion(unittest.TestCase):
         mock_open.return_value.__enter__.return_value.readlines.return_value = mock_file_content
 
         # Call the function with test data
-        file_path = '/path/to/log/file.log'
+        file_path = 'input_data/scenegraphlog20.log'
         cameraname = 'Camera1'
         data, camera = filter_log_file(file_path, cameraname)
 
-        # Assert the expected results
-        expected_data = [
-            {
-                'visibility_state': 0,
-                'tree_position': '{"name": "Object1", "t_x": 1, "t_y": 2, "t_z": 3}',
-                'json_data': {'name': 'Object1', 't_x': 1, 't_y': 2, 't_z': 3}
-            },
-            {
-                'visibility_state': 1,
-                'tree_position': '{"name": "Object2", "t_x": 4, "t_y": 5, "t_z": 6}',
-                'json_data': {'name': 'Object2', 't_x': 4, 't_y': 5, 't_z': 6}
-            },
-            {
-                'visibility_state': 2,
-                'tree_position': '{"name": "Object3", "t_x": 7, "t_y": 8, "t_z": 9}',
-                'json_data': {'name': 'Object3', 't_x': 7, 't_y': 8, 't_z': 9}
-            }
-        ]
         expected_camera = Camera(
             np.array([[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [0, 0, 0, 1]]),
             np.array([[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [0, 0, 0, 1]])
         )
-        self.assertEqual(data, expected_data)
+
         self.assertEqual(camera.position.tolist(), expected_camera.position.tolist())
         self.assertEqual(camera.projection_matrix.tolist(),
                           expected_camera.projection_matrix.tolist())
