@@ -1,8 +1,11 @@
 """ Test the conversion module. """
+import os
+import sys
 import unittest
 from unittest.mock import patch
 import numpy as np
-from conversion import filter_log_file, Camera
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../src')))
+from conversion import filter_log_file, Camera  # pylint: disable=wrong-import-position
 
 class TestConversion(unittest.TestCase):
     """Test cases for the conversion module."""

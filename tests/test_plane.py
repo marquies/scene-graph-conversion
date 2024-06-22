@@ -1,9 +1,12 @@
 """Test cases for the Plane class in conversion.py"""
+import os
+import sys
 
 import unittest
 import numpy as np
 
-from conversion import Plane
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../src')))
+from conversion import Plane # pylint: disable=wrong-import-position
 
 class TestPlane(unittest.TestCase):
     """Test Case for Plane class"""
