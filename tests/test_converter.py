@@ -24,7 +24,7 @@ class TestConversion(unittest.TestCase):
         # Call the function with test data
         file_path = 'input_data/scenegraphlog20.log'
         cameraname = 'Camera1'
-        data, camera = filter_log_file(file_path, cameraname)
+        _, camera = filter_log_file(file_path, cameraname)
 
         expected_camera = Camera(
             np.array([[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [0, 0, 0, 1]]),
