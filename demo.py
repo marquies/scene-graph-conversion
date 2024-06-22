@@ -2,13 +2,19 @@
 Demo
 """
 
+import sys
+import os
+
 import shutil # save img locally
 import pyyed
-
+import requests # request img from web
 from openai import OpenAI
 
-import requests # request img from web
-import converter.conversion as converter
+
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../src')))
+import conversion as converter # pylint: disable=wrong-import-position
+
+
 
 #inputs, camera = filter_log_file("input_data/scenegraphlog11.log", "Camera")
 inputs, camera = converter.filter_log_file("input_data/scenegraphlog20.log", "Main Camera")
