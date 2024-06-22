@@ -9,10 +9,15 @@ Rendering scene graphs recorded from virtual wolrds can be found here https://pa
 
 The script uses some libs to produce graphml and images with OpenAI
 
-The following command installs packages in bulk according to the configuration file, requirements.txt. In some environments, use pip3 instead of pip.
+Module Install
 
 ```
-pip install -r requirements.txt
+ pip install -e .
+```
+
+Use after install
+```
+import sgconversion
 ```
 
 To use OpenAI in the script, set your OpenAI API Key with
