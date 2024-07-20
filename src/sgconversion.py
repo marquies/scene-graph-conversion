@@ -18,8 +18,6 @@ def filter_log_file(file_path, cameraname):
     data = []
     camera = None
     with open(file_path, 'r', encoding="utf-8") as file:
-        r1 = re.compile("[a-z]{1}\"$")
-        r2 = re.compile("[a-z]{1}$")
         lines = file.readlines()
         for i in range(0, len(lines), 1):
             if lines[i].strip() == '' or lines[i].startswith('---'):
@@ -31,19 +29,8 @@ def filter_log_file(file_path, cameraname):
             pos2 = lines[i].rfind('}')
             if pos2 == -1:
                 print("Warning: Issue with parsing line - most likely incomplete JSON, try to fix.")
-                if lines[i].endswith(", \"\n"):
-                    #lines[i].endswith(", \"\n")
-                    lines[i] = lines[i][0:-1] + "fix\":\"\"}"
-                elif lines[i].endswith(", \"\"\n"):
-                    #lines[i].endswith(", \"\n")
-                    lines[i] = lines[i][0:-1] + ":\"\"}"
-                elif r1.search(lines[i]):
-                    lines[i] = lines[i][0:-1] + ":\"\"}"
-                elif r2.search(lines[i]):
-                    lines[i] = lines[i][0:-1] + "\":\"\"}"
-
+                lines[i] = try_fix_line(lines[i])
                 pos2 = lines[i].rfind('}')
-
 
             json_data = json.loads(lines[i][pos1:pos2+1])
 
@@ -75,6 +62,26 @@ def filter_log_file(file_path, cameraname):
                 camera = Camera(x, y)
 
     return data, camera
+
+def try_fix_line(line):
+    """
+    Try to complete the line.
+    """
+    r1 = re.compile("[a-z]{1}\"$")
+    r2 = re.compile("[a-z]{1}$")
+    nline = line
+    if line.endswith(", \"\n"):
+        #lines[i].endswith(", \"\n")
+        nline = line[0:-1] + "fix\":\"\"}"
+    elif line.endswith(", \"\"\n"):
+        #lines[i].endswith(", \"\n")
+        nline = line[0:-1] + ":\"\"}"
+    elif r1.search(line):
+        nline = line[0:-1] + ":\"\"}"
+    elif r2.search(line):
+        nline = line[0:-1] + "\":\"\"}"
+
+    return nline
 
 @dataclasses.dataclass
 class Tuple:
