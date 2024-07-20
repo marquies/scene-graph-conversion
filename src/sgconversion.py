@@ -30,6 +30,7 @@ def filter_log_file(file_path, cameraname):
             pos1 = lines[i].find('{')
             pos2 = lines[i].rfind('}')
             if pos2 == -1:
+                print("Warning: Issue with parsing line - most likely incomplete JSON, try to fix.")
                 if lines[i].endswith(", \"\n"):
                     #lines[i].endswith(", \"\n")
                     lines[i] = lines[i][0:-1] + "fix\":\"\"}"
