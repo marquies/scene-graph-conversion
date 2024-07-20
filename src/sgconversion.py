@@ -27,6 +27,13 @@ def filter_log_file(file_path, cameraname):
             # take line and get content of the braces in the line with a regex and convert to json
             pos1 = lines[i].find('{')
             pos2 = lines[i].rfind('}')
+            if pos2 == -1:
+                if lines[i].endswith(", \"\n"):
+                    lines[i].endswith(", \"\n")
+                    lines[i] = lines[i][0:-1] + "fix\":\"\"}"
+
+                pos2 = lines[i].rfind('}')
+
 
             json_data = json.loads(lines[i][pos1:pos2+1])
 
