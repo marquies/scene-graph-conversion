@@ -3,6 +3,7 @@ Conversion functions for the Unity log file.
 """
 
 import json
+import re
 import dataclasses
 import numpy as np
 
@@ -17,7 +18,8 @@ def filter_log_file(file_path, cameraname):
     data = []
     camera = None
     with open(file_path, 'r', encoding="utf-8") as file:
-
+        r1 = re.compile("[a-z]{1}\"$")
+        r2 = re.compile("[a-z]{1}$")
         lines = file.readlines()
         for i in range(0, len(lines), 1):
             if lines[i].strip() == '' or lines[i].startswith('---'):
@@ -29,8 +31,15 @@ def filter_log_file(file_path, cameraname):
             pos2 = lines[i].rfind('}')
             if pos2 == -1:
                 if lines[i].endswith(", \"\n"):
-                    lines[i].endswith(", \"\n")
+                    #lines[i].endswith(", \"\n")
                     lines[i] = lines[i][0:-1] + "fix\":\"\"}"
+                elif lines[i].endswith(", \"\"\n"):
+                    #lines[i].endswith(", \"\n")
+                    lines[i] = lines[i][0:-1] + ":\"\"}"
+                elif r1.search(lines[i]):
+                    lines[i] = lines[i][0:-1] + ":\"\"}"
+                elif r2.search(lines[i]):
+                    lines[i] = lines[i][0:-1] + "\":\"\"}"
 
                 pos2 = lines[i].rfind('}')
 
