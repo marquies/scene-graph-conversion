@@ -73,6 +73,8 @@ def try_fix_line(line):
     if line.endswith(", \"\n"):
         #lines[i].endswith(", \"\n")
         nline = line[0:-1] + "fix\":\"\"}"
+    elif line.endswith(",\n"):
+        nline = line[0:-2] + "}"
     elif line.endswith(", \"\"\n"):
         #lines[i].endswith(", \"\n")
         nline = line[0:-1] + ":\"\"}"
