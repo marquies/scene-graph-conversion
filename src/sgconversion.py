@@ -20,7 +20,7 @@ def filter_log_file(file_path, cameraname):
     with open(file_path, 'r', encoding="utf-8") as file:
         lines = file.readlines()
         for i in range(0, len(lines), 1):
-            if lines[i].strip() == '' or lines[i].startswith('---'):
+            if lines[i].strip() == '' or lines[i].strip() == '\n' or lines[i].startswith('---'):
                 continue
 
             visibility_state, tree_position = lines[i].split(' ', 1)
@@ -35,7 +35,7 @@ def filter_log_file(file_path, cameraname):
             json_data = json.loads(lines[i][pos1:pos2+1])
 
             #if json_data['state'] == "1" and int(json_data['depth']) <= 0:
-            if int(json_data['depth']) <= 0:
+            if int(json_data['depth']) <= 2 and json_data['state'] == "1":
                 data.append({
                     'visibility_state': int(visibility_state),
                     'tree_position': tree_position.strip(),
@@ -68,7 +68,7 @@ def try_fix_line(line):
     Try to complete the line.
     """
     r1 = re.compile("[a-z]{1}\"$")
-    r2 = re.compile("[a-z]{1}$")
+    r2 = re.compile("[a-z_]{1}$")
     nline = line
     if line.endswith(", \"\n"):
         #lines[i].endswith(", \"\n")
