@@ -69,6 +69,10 @@ def try_fix_line(line):
     """
     r1 = re.compile("[a-z]{1}\"$")
     r2 = re.compile("[a-z_]{1}$")
+    r3 = re.compile("[0-9]{1}\"$")
+    r4 = re.compile("[0-9]{1}.$")
+    r5 = re.compile("[0-9]*.[0-9]{1,10}$")
+    r6 = re.compile("[0-9]{1}\"$")
     nline = line
     if line.endswith(", \"\n"):
         #lines[i].endswith(", \"\n")
@@ -76,12 +80,25 @@ def try_fix_line(line):
     elif line.endswith(",\n"):
         nline = line[0:-2] + "}"
     elif line.endswith(", \"\"\n"):
-        #lines[i].endswith(", \"\n")
         nline = line[0:-1] + ":\"\"}"
+    elif line.endswith("\":\n") or line.endswith("\" :\n"):
+        nline = line[0:-1] + "\"\"}"
+    elif line.endswith("\": \"\n"):
+        nline = line[0:-1] + "\"}"
+    elif line.endswith("\": \"-\n"):
+        nline = line[0:-1] + "0\"}"
     elif r1.search(line):
         nline = line[0:-1] + ":\"\"}"
     elif r2.search(line):
         nline = line[0:-1] + "\":\"\"}"
+    elif r3.search(line):
+        nline = line[0:-1] + "}"
+    elif r4.search(line):
+        nline = line[0:-1] + "0\"}"
+    elif r5.search(line):
+        nline = line[0:-1] + "\"}"
+    elif r6.search(line):
+        nline = line[0:-1] + "}"
 
     return nline
 
