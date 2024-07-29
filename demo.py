@@ -17,7 +17,7 @@ import sgconversion as converter # pylint: disable=wrong-import-position
 
 
 #inputs, camera = filter_log_file("input_data/scenegraphlog11.log", "Camera")
-inputs, camera = converter.filter_log_file("input_data/scenegraphlog20.log", "Main Camera")
+inputs, camera = converter.filter_log_file("input_data/scenegraphlog21.log", "Main Camera")
 
 print("Found " + str(len(inputs)) + " objects in the log file.  ")
 
