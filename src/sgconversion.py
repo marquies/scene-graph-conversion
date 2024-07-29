@@ -264,8 +264,8 @@ def compare_positions(obj_a, obj_b):
     front_back = "in front of" if obj_a.z < obj_b.z else "behind"
     front_back = front_back if abs(obj_a.z - obj_b.z) > 0.01 else "same depth"
 
-    print(f"\n object {obj_a.name} is {obj_b} of object {obj_b.name}"+
-          f" and {above_below} object {obj_b.name} and {front_back} object {obj_b.name}.")
+    #print(f"\n object {obj_a.name} is {obj_b} of object {obj_b.name}"+
+    #      f" and {above_below} object {obj_b.name} and {front_back} object {obj_b.name}.")
     return [Tuple(obj_a.name, left_right, obj_b.name),
             Tuple(obj_a.name, above_below, obj_b.name), Tuple(obj_a.name, front_back, obj_b.name)]
 
