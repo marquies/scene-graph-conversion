@@ -295,6 +295,21 @@ def remove_bidirectional_duplicates(tuples):
         predicate = item.y
         subject = item.z
         if (obj, predicate, subject) not in seen:
-            seen.add((subject, predicate, obj))
-            result.append(Tuple(subject, predicate, obj))
+            seen.add((subject, _get_opposite(predicate), obj))
+            seen.add((obj, predicate, subject))
+            result.append(Tuple(obj, predicate, subject))
     return result
+
+def _get_opposite(predicate):
+    switcher = {
+        "left": "right",
+        "right": "left",
+        "above": "beneath",
+        "beneath": "above",
+        "in front of": "behind",
+        "behind": "in front of",
+        "same level": "same level",
+        "same height": "same height",
+        "same depth": "same depth",
+    }
+    return switcher.get(predicate, "unknown")
