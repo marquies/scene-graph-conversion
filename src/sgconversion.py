@@ -3,6 +3,7 @@ Conversion functions for the Unity log file.
 """
 
 import json
+import re
 import dataclasses
 import numpy as np
 
@@ -17,10 +18,9 @@ def filter_log_file(file_path, cameraname):
     data = []
     camera = None
     with open(file_path, 'r', encoding="utf-8") as file:
-
         lines = file.readlines()
         for i in range(0, len(lines), 1):
-            if lines[i].strip() == '' or lines[i].startswith('---'):
+            if lines[i].strip() == '' or lines[i].strip() == '\n' or lines[i].startswith('---'):
                 continue
 
             visibility_state, tree_position = lines[i].split(' ', 1)
@@ -28,17 +28,14 @@ def filter_log_file(file_path, cameraname):
             pos1 = lines[i].find('{')
             pos2 = lines[i].rfind('}')
             if pos2 == -1:
-                if lines[i].endswith(", \"\n"):
-                    lines[i].endswith(", \"\n")
-                    lines[i] = lines[i][0:-1] + "fix\":\"\"}"
-
+                print("Warning: Issue with parsing line - most likely incomplete JSON, try to fix.")
+                lines[i] = try_fix_line(lines[i])
                 pos2 = lines[i].rfind('}')
-
 
             json_data = json.loads(lines[i][pos1:pos2+1])
 
             #if json_data['state'] == "1" and int(json_data['depth']) <= 0:
-            if int(json_data['depth']) <= 0:
+            if int(json_data['depth']) <= 2 and json_data['state'] == "1":
                 data.append({
                     'visibility_state': int(visibility_state),
                     'tree_position': tree_position.strip(),
@@ -65,6 +62,45 @@ def filter_log_file(file_path, cameraname):
                 camera = Camera(x, y)
 
     return data, camera
+
+def try_fix_line(line):
+    """
+    Try to complete the line.
+    """
+    r1 = re.compile("[a-z]{1}\"$")
+    r2 = re.compile("[a-z_]{1}$")
+    r3 = re.compile("[0-9]{1}\"$")
+    r4 = re.compile("[0-9]{1}.$")
+    r5 = re.compile("[0-9]*.[0-9]{1,10}$")
+    r6 = re.compile("[0-9]{1}\"$")
+    nline = line
+    if line.endswith(", \"\n"):
+        #lines[i].endswith(", \"\n")
+        nline = line[0:-1] + "fix\":\"\"}"
+    elif line.endswith(",\n"):
+        nline = line[0:-2] + "}"
+    elif line.endswith(", \"\"\n"):
+        nline = line[0:-1] + ":\"\"}"
+    elif line.endswith("\":\n") or line.endswith("\" :\n"):
+        nline = line[0:-1] + "\"\"}"
+    elif line.endswith("\": \"\n"):
+        nline = line[0:-1] + "\"}"
+    elif line.endswith("\": \"-\n"):
+        nline = line[0:-1] + "0\"}"
+    elif r1.search(line):
+        nline = line[0:-1] + ":\"\"}"
+    elif r2.search(line):
+        nline = line[0:-1] + "\":\"\"}"
+    elif r3.search(line):
+        nline = line[0:-1] + "}"
+    elif r4.search(line):
+        nline = line[0:-1] + "0\"}"
+    elif r5.search(line):
+        nline = line[0:-1] + "\"}"
+    elif r6.search(line):
+        nline = line[0:-1] + "}"
+
+    return nline
 
 @dataclasses.dataclass
 class Tuple:
@@ -228,8 +264,8 @@ def compare_positions(obj_a, obj_b):
     front_back = "in front of" if obj_a.z < obj_b.z else "behind"
     front_back = front_back if abs(obj_a.z - obj_b.z) > 0.01 else "same depth"
 
-    print(f"\n object {obj_a.name} is {obj_b} of object {obj_b.name}"+
-          f" and {above_below} object {obj_b.name} and {front_back} object {obj_b.name}.")
+    #print(f"\n object {obj_a.name} is {obj_b} of object {obj_b.name}"+
+    #      f" and {above_below} object {obj_b.name} and {front_back} object {obj_b.name}.")
     return [Tuple(obj_a.name, left_right, obj_b.name),
             Tuple(obj_a.name, above_below, obj_b.name), Tuple(obj_a.name, front_back, obj_b.name)]
 
@@ -259,6 +295,21 @@ def remove_bidirectional_duplicates(tuples):
         predicate = item.y
         subject = item.z
         if (obj, predicate, subject) not in seen:
-            seen.add((subject, predicate, obj))
-            result.append(Tuple(subject, predicate, obj))
+            seen.add((subject, _get_opposite(predicate), obj))
+            seen.add((obj, predicate, subject))
+            result.append(Tuple(obj, predicate, subject))
     return result
+
+def _get_opposite(predicate):
+    switcher = {
+        "left": "right",
+        "right": "left",
+        "above": "beneath",
+        "beneath": "above",
+        "in front of": "behind",
+        "behind": "in front of",
+        "same level": "same level",
+        "same height": "same height",
+        "same depth": "same depth",
+    }
+    return switcher.get(predicate, "unknown")

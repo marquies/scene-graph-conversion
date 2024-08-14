@@ -1,0 +1,35 @@
+Demo Environment is left, above, and same depth as Cube.
+Gaze Interactables is left, beneath, and same depth as Cube.
+Climb Sample is left, above, and behind Cube.
+Poke Interactions Sample is left, beneath, and same depth as Cube.
+Movement Recognizer is left, above, and same depth as Cube.
+Image Spawner is left, beneath, and same depth as Cube.
+Teleportation Environment is left, above, and same depth as Cube.
+Interactables Sample is left, beneath, and same depth as Cube.
+XR Interaction Setup is left, above, and same depth as Cube.
+UI Sample is left, beneath, and same depth as Cube.
+Gaze Snap Volume is left, above, and same depth as Cube.
+
+Cube is right and beneath Demo Environment.
+Gaze Interactables is left and beneath Demo Environment.
+Climb Sample is left, above, and behind Demo Environment.
+Poke Interactions Sample is right and beneath Demo Environment.
+Movement Recognizer is same level, height, and depth as Demo Environment.
+Image Spawner is same level and beneath Demo Environment.
+Teleportation Environment is right and above Demo Environment.
+Interactables Sample is right and beneath Demo Environment.
+XR Interaction Setup is same level, height, and depth as Demo Environment.
+UI Sample is left and beneath Demo Environment.
+Gaze Snap Volume is same level, height, and depth as Demo Environment.
+
+Cube is right and above Gaze Interactables.
+Demo Environment is right and above Gaze Interactables.
+Climb Sample is left, above, and behind Gaze Interactables.
+Poke Interactions Sample is right and beneath Gaze Interactables.
+Movement Recognizer is right and above Gaze Interactables.
+Image Spawner is right and beneath Gaze Interactables.
+Teleportation Environment is right and above Gaze Interactables.
+Interactables Sample is right and same height as Gaze Interactables.
+XR Interaction Setup is right and above Gaze Interactables.
+UI Sample is left and beneath Gaze Interactables.
+G. CGI

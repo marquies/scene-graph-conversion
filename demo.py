@@ -17,7 +17,7 @@ import sgconversion as converter # pylint: disable=wrong-import-position
 
 
 #inputs, camera = filter_log_file("input_data/scenegraphlog11.log", "Camera")
-inputs, camera = converter.filter_log_file("input_data/scenegraphlog20.log", "Main Camera")
+inputs, camera = converter.filter_log_file("input_data/scenegraphlog30.log", "Main Camera")
 
 print("Found " + str(len(inputs)) + " objects in the log file.  ")
 
@@ -27,11 +27,11 @@ print("Filtered " + str(len(objects)) + " objects from the log file.   ")
 
 tuples = converter.determine_arrangement2(camera, objects)
 
-tuples = converter.remove_bidirectional_duplicates(tuples)
+tuples2 = converter.remove_bidirectional_duplicates(tuples)
 
 g = pyyed.Graph()
 
-for element in tuples:
+for element in tuples2:
     if element.x not in g.nodes:
         g.add_node(element.x)
     if element.z not in g.nodes:
