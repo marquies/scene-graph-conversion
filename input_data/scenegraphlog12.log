@@ -7934,7 +7934,6 @@
 
 3   Directional Light{ "state":"3", "depth":"1", "name":"Directional Light", "path":"/Base Scene/Directional Light", "t_x":"0", "t_y" : "5.907", "t_z": "0",  "s_x":"1", "s_y" : "1", "s_z": "1",  "r_x":"0.8185639", "r_y" : "-0.1594066", "r_z": "-0.374843" , "r_w": "0.4050128",  "b_c_x":"0", "b_c_y" : "5.907", "b_c_z": "0", "b_s_x":"0", "b_s_y" : "0", "b_s_z": "0"}
 
-3   
 3   InvisibleWalls{ "state":"3", "depth":"1", "name":"InvisibleWalls", "path":"/Base Scene/InvisibleWalls", "t_x":"0", "t_y" : "0", "t_z": "0",  "s_x":"1", "s_y" : "1", "s_z": "1",  "r_x":"0", "r_y" : "0", "r_z": "0" , "r_w": "1",  "b_c_x":"0", "b_c_y" : "0", "b_c_z": "0", "b_s_x":"0", "b_s_y" : "0", "b_s_z": "0"}
 
 3     Plane{ "state":"3", "depth":"2", "name":"Plane", "path":"/Base Scene/InvisibleWalls/Plane", "t_x":"24.88", "t_y" : "0.99", "t_z": "-0.28",  "s_x":"0.2719513", "s_y" : "1", "s_z": "5.087896",  "r_x":"0", "r_y" : "0", "r_z": "-0.7071068" , "r_w": "0.7071068",  "b_c_x":"24.88", "b_c_y" : "0.99", "b_c_z": "-0.28", "b_s_x":"0", "b_s_y" : "0", "b_s_z": "0"}
@@ -7972,7 +7971,6 @@
 
 5   Capsule{ "state":"5", "depth":"1", "name":"Capsule", "path":"/First Person Player/Capsule", "t_x":"8.322899", "t_y" : "1.16", "t_z": "10.90441",  "s_x":"0.9000002", "s_y" : "1.2", "s_z": "0.9000002",  "r_x":"0", "r_y" : "-0.693359", "r_z": "0" , "r_w": "0.7205924",  "b_c_x":"8.322899", "b_c_y" : "1.16", "b_c_z": "10.90441", "b_s_x":"0.933989", "b_s_y" : "2.4", "b_s_z": "0.9339886"}
 
-3   
 3 OtherPlayers{ "state":"3", "depth":"0", "name":"OtherPlayers", "path":"/OtherPlayers", "t_x":"0", "t_y" : "0", "t_z": "0",  "s_x":"1", "s_y" : "1", "s_z": "1",  "r_x":"0", "r_y" : "0", "r_z": "0" , "r_w": "1",  "b_c_x":"-13.57976", "b_c_y" : "3.186185", "b_c_z": "7.472795", "b_s_x":"41.18365", "b_s_y" : "7.421479", "b_s_z": "33.77581"}
 
 3   Player_1{ "state":"3", "depth":"1", "name":"Player_1", "path":"/OtherPlayers/Player_1", "t_x":"0", "t_y" : "0", "t_z": "0",  "s_x":"1", "s_y" : "1", "s_z": "1",  "r_x":"0", "r_y" : "0", "r_z": "0" , "r_w": "1",  "b_c_x":"-15.25041", "b_c_y" : "1.29945", "b_c_z": "12.18035", "b_s_x":"30.50081", "b_s_y" : "3.043319", "b_s_z": "24.3607"}
