@@ -1,0 +1,11 @@
+Main Camera is surrounded by Directional Light, Tree, Man, XR Device Simulator, and Grass, with each object positioned to the left, above, and behind it.
+
+Directional Light is surrounded by Tree, Man, XR Device Simulator, and Grass, with each object positioned to the right, above, and behind it.
+
+Tree is surrounded by Main Camera, Directional Light, Man, XR Device Simulator, and Grass, with each object positioned to the right, above, and behind it.
+
+Man is surrounded by Main Camera, Directional Light, Tree, XR Device Simulator, and Grass, with each object positioned to the right, above, and behind it.
+
+XR Device Simulator is surrounded by Main Camera, Directional Light, Tree, Man, and Grass, with each object positioned to the right, above, and behind it.
+
+Grass is surrounded by Main Camera, Directional Light, Tree, Man, and XR Device Simulator, with each object positioned to the right, above, and behind it.. CGI

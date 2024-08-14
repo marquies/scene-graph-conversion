@@ -1,0 +1,5 @@
+Foreground: None
+
+Midground: None
+
+Background: None. CGI

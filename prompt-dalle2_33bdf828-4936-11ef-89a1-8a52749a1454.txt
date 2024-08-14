@@ -1,0 +1,79 @@
+Foreground:
+- pizza
+- way
+- tree
+- road
+- car
+- mall
+- street
+- bridge
+- side
+- wall
+- line
+- tea
+- art
+
+Midground:
+- pizza is left pizza.
+- way is left pizza.
+- tree is left pizza.
+- road is left pizza.
+- car is left pizza.
+- mall is right pizza.
+- street is left pizza.
+- bridge is right pizza.
+- side is right pizza.
+- wall is right pizza.
+- line is left pizza.
+- tea is right pizza.
+- art is left pizza.
+- pizza is right way.
+- tree is left way.
+- road is left way.
+- car is right way.
+- mall is right way.
+- street is left way.
+- bridge is right way.
+- side is right way.
+- wall is right way.
+- way is right way.
+- line is left way.
+- tea is right way.
+- art is left way.
+- pizza is right tree.
+- way is right tree.
+- tree is right tree.
+- road is right tree.
+- car is right tree.
+- mall is right tree.
+- street is right tree.
+- bridge is right tree.
+- side is right tree.
+- wall is right tree.
+- line is right tree.
+- tea is right tree.
+- art is right tree.
+- pizza is right road.
+- way is right road.
+- tree is left road.
+- road is left road.
+- car is right road.
+- mall is right road.
+- street is left road.
+- bridge is right road.
+- side is right road.
+- wall is right road.
+- line is left road.
+- tea is right road.
+- art is left road.
+- pizza is right car.
+- way is left car.
+- tree is left car.
+- road is left car.
+- mall is right car.
+- car is right car.
+- street is left car.
+- bridge is right car.
+- side is right car.
+- wall is right car.
+- line is left. CGI

@@ -1,0 +1,38 @@
+**Foreground:**
+- Cube
+- Demo Environment
+- Gaze Interactables
+- Climb Sample
+- Poke Interactions Sample
+- Movement Recognizer
+- Image Spawner
+- Teleportation Environment
+- Interactables Sample
+- XR Interaction Setup
+- UI Sample
+- Gaze Snap Volume
+
+**Midground:**
+- Cube (relative to Demo Environment)
+- Gaze Interactables (relative to Demo Environment)
+- Climb Sample (relative to Demo Environment)
+- Poke Interactions Sample (relative to Demo Environment)
+- Movement Recognizer (relative to Demo Environment)
+- Image Spawner (relative to Demo Environment)
+- Teleportation Environment (relative to Demo Environment)
+- Interactables Sample (relative to Demo Environment)
+- XR Interaction Setup (relative to Demo Environment)
+- UI Sample (relative to Demo Environment)
+- Gaze Snap Volume (relative to Demo Environment)
+
+**Background:**
+- Cube (relative to Gaze Interactables)
+- Demo Environment (relative to Gaze Interactables)
+- Climb Sample (relative to Gaze Interactables)
+- Poke Interactions Sample (relative to Gaze Interactables)
+- Movement Recognizer (relative to Gaze Interactables)
+- Image Spawner (relative to Gaze Interactables)
+- Teleportation Environment (relative to Gaze Interactables)
+- Interactables Sample (relative to Gaze Interactables)
+- XR Interaction Setup (relative to Gaze Interactables)
+- UI Sample (relative to Gaze Interactables). CGI

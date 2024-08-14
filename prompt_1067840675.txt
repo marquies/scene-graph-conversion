@@ -1,0 +1,13 @@
+Grass, Directional Light, Tree, and Man are to the right and beneath the GameObject, all at the same depth. Movement is at the same level, height, and depth as the GameObject. XR Interaction Setup is to the left, above, and behind the GameObject.
+
+GameObject, Directional Light, Movement, Tree, and Man are to the left and above Grass. Directional Light, Movement, Tree, and Man are at the same depth as Grass. XR Interaction Setup is to the left, above, and behind Grass.
+
+GameObject, Grass, Movement, Tree, and Man are to the left and above Directional Light. Movement, Tree, and Man are at the same depth as Directional Light. XR Interaction Setup is to the left, above, and behind Directional Light.
+
+Grass, Directional Light, Tree, and Man are to the right and beneath Movement, with Tree and Man at the same depth as Movement. XR Interaction Setup is to the left, above, and behind Movement.
+
+GameObject, Grass, Directional Light, and Movement are to the left and above Tree. Man is to the right and beneath Tree, at the same depth. XR Interaction Setup is to the left, above, and behind Tree.
+
+GameObject, Directional Light, Movement, and Tree are to the left and above Man. XR Interaction Setup is to the left, above, and behind Man.
+
+GameObject, Grass, Directional Light, Movement, Tree, and Man are to the right and beneath XR Interaction Setup, all in front of XR Interaction Setup.. CGI

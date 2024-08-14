@@ -1,0 +1,14 @@
+**Foreground:**
+- flower
+- car
+
+**Midground:**
+- way
+- road
+- tree
+
+**Background:**
+- end
+- fence
+- grass
+- path. CGI

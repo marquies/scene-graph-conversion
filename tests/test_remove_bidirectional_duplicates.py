@@ -11,7 +11,6 @@ class TestConversion(unittest.TestCase):
     Test for bidirectional duplicates removal.
     """
 
-    @patch('builtins.open')
     def test_filter_bidirectional(self):
         """Test the filter_log_file function."""
         # Mock the file content
@@ -27,7 +26,6 @@ class TestConversion(unittest.TestCase):
             (o_tuple.x == 'b' and o_tuple.y == 'right' and o_tuple.z == 'a')
         )
 
-    @patch('builtins.open')
     def test_filter_dublictaed(self):
         """Test the filter_log_file function."""
         # Mock the file content
@@ -42,7 +40,6 @@ class TestConversion(unittest.TestCase):
             o_tuple.x == 'a' and o_tuple.y == 'left' and o_tuple.z == 'b'
         )
 
-    @patch('builtins.open')
     def test_filter_single(self):
         """Test the filter_log_file function."""
         # Mock the file content
@@ -57,7 +54,6 @@ class TestConversion(unittest.TestCase):
             o_tuple.x == 'a' and o_tuple.y == 'left' and o_tuple.z == 'b'
         )
 
-    @patch('builtins.open')
     def test_filter_two_biderections1(self):
         """Test the filter_log_file function."""
         # Mock the file content
@@ -79,7 +75,6 @@ class TestConversion(unittest.TestCase):
             (o_tuple.x == 'b' and o_tuple.y == 'above' and o_tuple.z == 'a')
         )
 
-    @patch('builtins.open')
     def test_filter_two_biderections2(self):
         """Test the filter_log_file function."""
         # Mock the file content
